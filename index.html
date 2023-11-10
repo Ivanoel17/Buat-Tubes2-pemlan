@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App</title>
+</head>
+<body>
+    <!-- Daftar pesan akan ditampilkan di sini -->
+    <ul id="messages"></ul>
+
+    <!-- Form untuk mengirim pesan -->
+    <form id="form" action="" onsubmit="sendMessage(); return false;">
+        <!-- Input untuk mengetik pesan -->
+        <input id="m" autocomplete="off" />
+
+        <!-- Tombol untuk mengirim pesan -->
+        <button>Send</button>
+    </form>
+
+    <!-- Mengimpor skrip Socket.IO dari CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js"></script>
+
+    <script>
+        // Membuat koneksi Socket.IO dengan server
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+        // Mendengarkan event 'message' dari server
+        socket.on('message', function(msg){
+            // Menambahkan pesan baru ke daftar pesan
+            $('#messages').append($('<li>').text(msg));
+        });
+
+        // Fungsi untuk mengirim pesan ke server
+        function sendMessage() {
+            // Mengambil nilai pesan dari input
+            var message = $('#m').val();
+
+            // Mengirim pesan ke server melalui event 'message'
+            socket.emit('message', message);
+
+            // Mengosongkan input setelah mengirim pesan
+            $('#m').val('');
+
+            // Mengembalikan false agar form tidak melakukan submit biasa
+            return false;
+        }
+    </script>
+</body>
+</html>

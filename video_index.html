@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Streaming App</title>
+</head>
+<body>
+    <img id="video_feed" width="640" height="480">
+
+<!-- Mengimpor skrip Socket.IO dari CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js"></script>
+
+<script>
+    // Membuat koneksi Socket.IO dengan server
+    var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+    // Mendengarkan event 'response' dari server
+    socket.on('response', function(msg){
+        // Ketika event 'response' terjadi, mencetak pesan ke konsol
+        console.log(msg);
+    });
+
+    // Mendapatkan elemen video dari HTML menggunakan ID 'video_feed'
+    var video = document.getElementById('video_feed');
+
+    // Membuat objek EventSource untuk mendapatkan data streaming dari endpoint '/video_feed'
+    var source = new EventSource('/video_feed');
+
+    // Menangani setiap pesan yang diterima dari server melalui EventSource
+    source.onmessage = function(event) {
+        // Mengatur data gambar sebagai sumber gambar untuk elemen video
+        video.src = 'data:image/jpeg;base64,' + event.data;
+    };
+</script>
+</body>
+</html>
